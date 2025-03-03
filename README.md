@@ -56,7 +56,7 @@ echo "GIT_USERNAME={github username}" >> .env
 echo "GIT_PASSWORD={github personal access token}" >> .env
 
 # Local 환경 설정
-echo "ENV=local" >> .env
+echo "ENV=local" >> .local_env
 ```
 
 2) GitHub 환경 `.env` 파일 생성

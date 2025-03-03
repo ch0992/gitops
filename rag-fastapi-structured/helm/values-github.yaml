@@ -4,7 +4,7 @@ environment:
 replicaCount: 1
 
 image:
-  repository: ghcr.io/${GITHUB_USERNAME}/gitops/rag-fastapi
+  repository: ghcr.io/${GIT_USERNAME}/gitops/rag-fastapi-structured
   tag: latest
   pullPolicy: Always
 
