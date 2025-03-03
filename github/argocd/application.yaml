@@ -11,7 +11,7 @@ spec:
     path: rag-fastapi-structured/helm
     helm:
       valueFiles:
-        - values.yaml
+      - values.yaml
       values: |
         environment:
           name: github
@@ -20,7 +20,7 @@ spec:
           tag: latest
           pullPolicy: Always
         service:
-          port: 9001
+          port: 8061
         imagePullSecrets:
           - name: ghcr-secret
   destination:
@@ -31,4 +31,4 @@ spec:
       prune: true
       selfHeal: true
     syncOptions:
-      - CreateNamespace=true
+    - CreateNamespace=true

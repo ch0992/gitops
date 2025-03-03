@@ -183,3 +183,33 @@ argocd app get rag-fastapi-github
 1. Git 인증 정보는 반드시 안전하게 관리해야 합니다.
 2. ArgoCD Application을 삭제하기 전에 관련 리소스가 정리되었는지 확인하세요.
 3. 프로덕션 환경에서는 적절한 리소스 설정과 보안 정책을 적용해야 합니다.
+
+## 트러블슈팅
+
+### GitHub Container Registry 인증 오류
+
+**문제**: Pod가 `ImagePullBackOff` 상태가 되며 다음과 같은 에러가 발생하는 경우
+```
+Failed to pull image "ghcr.io/[username]/rag-fastapi-structured:latest": Error response from daemon: Head "https://ghcr.io/v2/[username]/rag-fastapi-structured/manifests/latest": unauthorized
+```
+
+**해결 방법**:
+1. `ghcr-secret` 생성 확인
+```bash
+kubectl get secret ghcr-secret -n fastapi
+```
+
+2. Deployment의 `imagePullSecrets` 설정 확인
+```yaml
+imagePullSecrets:
+  - name: ghcr-secret
+```
+
+3. 이미지 경로 확인
+- values-github.yaml의 repository 경로가 실제 이미지 경로와 일치하는지 확인
+- 예: `ghcr.io/username/rag-fastapi-structured`
+
+4. GitHub Container Registry 로그인 상태 확인
+```bash
+docker login ghcr.io -u ${GIT_USERNAME} -p ${GIT_PASSWORD}
+```
