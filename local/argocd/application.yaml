@@ -19,12 +19,6 @@ spec:
           repository: rag-fastapi-structured
           tag: latest
           pullPolicy: IfNotPresent
-        ingress:
-          hosts:
-            - host: rag-fastapi.local
-              paths:
-                - path: /
-                  pathType: Prefix
   destination:
     server: https://kubernetes.default.svc
     namespace: fastapi

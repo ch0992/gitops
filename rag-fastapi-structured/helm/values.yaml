@@ -15,12 +15,7 @@ image:
 
 service:
   type: LoadBalancer
-  port: 8000
-
-ingress:
-  enabled: true
-  className: nginx
-  hosts: []
+  port: 9000
 
 resources:
   limits:

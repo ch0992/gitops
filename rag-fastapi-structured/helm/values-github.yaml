@@ -10,16 +10,7 @@ image:
 
 service:
   type: LoadBalancer
-  port: 8000
-
-ingress:
-  enabled: true
-  className: nginx
-  hosts:
-  - host: rag-fastapi.github
-    paths:
-    - path: /
-      pathType: Prefix
+  port: 9001
 
 resources:
   limits:

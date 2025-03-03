@@ -20,13 +20,7 @@ spec:
           tag: latest
           pullPolicy: Always
         service:
-          port: 8001
-        ingress:
-          hosts:
-            - host: rag-fastapi.github
-              paths:
-                - path: /
-                  pathType: Prefix
+          port: 9001
         imagePullSecrets:
           - name: ghcr-secret
   destination:
