@@ -15,7 +15,10 @@ image:
 
 service:
   type: LoadBalancer
-  port: 8060
+  # port는 반드시 환경별 values 파일(values-local.yaml 또는 values-github.yaml)에서 정의해야 합니다
+  # local: 8060
+  # github: 8061
+  port: null
 
 resources:
   limits:
