@@ -1,5 +1,12 @@
 # GitOps Project
 
+## Author
+
+- **Author**: 최영규 (Yeong-gyu Choi)
+- **LinkedIn**: [Yeong-gyu Choi](https://www.linkedin.com/in/yeong-gyu-choi-32355b174/)
+- **Email**: ktma82@gmail.com
+
+
 ## 프로젝트 개요
 
 이 프로젝트는 ArgoCD를 사용하여 RAG(Retrieval-Augmented Generation) FastAPI 애플리케이션을 Kubernetes 클러스터에 배포하는 GitOps 구현체입니다.
