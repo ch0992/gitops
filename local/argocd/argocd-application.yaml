@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: rag-fastapi
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/ch0992/gitops.git # Git 저장소 URL
+    path: rag-fastapi-structured/helm # Helm Chart 경로 변경
+    targetRevision: main
+    helm:
+      valueFiles:
+      - values.yaml
+  destination:
+    namespace: fastapi # FastAPI 서비스가 배포될 네임스페이스
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

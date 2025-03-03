@@ -1,0 +1,28 @@
+# Web Framework
+fastapi>=0.109.2
+uvicorn>=0.27.1
+
+# LangChain
+langchain>=0.1.5
+langchain-community>=0.0.19
+langchain-huggingface>=0.0.9
+langchain-chroma>=0.2.2
+
+# Vector Database
+chromadb>=0.4.22
+
+# Embeddings
+nomic>=2.0.3
+sentence-transformers>=2.2.2
+torch>=2.2.0
+
+# API and Data Handling
+pydantic>=2.6.1
+requests>=2.31.0
+
+# Document Loading and Processing
+python-multipart>=0.0.9
+tiktoken>=0.5.2
+
+# Type Hints
+typing-extensions>=4.9.0

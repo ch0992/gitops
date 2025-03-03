@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: rag-fastapi-local
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/ch0992/gitops.git
+    targetRevision: HEAD
+    path: rag-fastapi-structured/helm
+    helm:
+      valueFiles:
+        - values.yaml
+      values: |
+        environment:
+          name: local
+        image:
+          repository: rag-fastapi-structured
+          tag: latest
+          pullPolicy: IfNotPresent
+        ingress:
+          hosts:
+            - host: rag-fastapi.local
+              paths:
+                - path: /
+                  pathType: Prefix
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: fastapi
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

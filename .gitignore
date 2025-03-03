@@ -1,0 +1,25 @@
+# Environment variables and secrets
+.env
+*.env
+
+# Generated secrets
+secret/argocd-repository.yaml
+secret/ghcr-secret.yaml
+
+# Backup files
+backup/
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
