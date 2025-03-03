@@ -4,7 +4,7 @@
 
 # 환경 설정
 environment:
-  name: ""  # 필수: local 또는 github
+  name: "" # 필수: local 또는 github
 
 replicaCount: 1
 
@@ -15,7 +15,7 @@ image:
 
 service:
   type: LoadBalancer
-  port: 9000
+  port: ""
 
 resources:
   limits:
