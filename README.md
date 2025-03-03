@@ -213,3 +213,13 @@ imagePullSecrets:
 ```bash
 docker login ghcr.io -u ${GIT_USERNAME} -p ${GIT_PASSWORD}
 ```
+
+## 작성자 (Author)
+
+**최영규 (Yeong-gyu Choi)**
+- LinkedIn: [Yeong-gyu Choi](https://www.linkedin.com/in/yeong-gyu-choi-32355b174/)
+- Email: ktma82@gmail.com
+
+## 라이선스 (License)
+
+MIT License
