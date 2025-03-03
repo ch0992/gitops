@@ -10,7 +10,7 @@ image:
 
 service:
   type: LoadBalancer
-  port: 9001
+  port: 8000
 
 resources:
   limits:
