@@ -1,12 +1,5 @@
 # GitOps Project
 
-## Author
-
-- **Author**: 최영규 (Yeong-gyu Choi)
-- **LinkedIn**: [Yeong-gyu Choi](https://www.linkedin.com/in/yeong-gyu-choi-32355b174/)
-- **Email**: ktma82@gmail.com
-
-
 ## 프로젝트 개요
 
 이 프로젝트는 ArgoCD를 사용하여 RAG(Retrieval-Augmented Generation) FastAPI 애플리케이션을 Kubernetes 클러스터에 배포하는 GitOps 구현체입니다.
@@ -310,3 +303,13 @@ argocd app get rag-fastapi-github
 1. Git 인증 정보는 반드시 안전하게 관리해야 합니다.
 2. ArgoCD Application을 삭제하기 전에 관련 리소스가 정리되었는지 확인하세요.
 3. 프로덕션 환경에서는 적절한 리소스 설정과 보안 정책을 적용해야 합니다.
+
+## Author
+
+- **Author**: 최영규 (Yeong-gyu Choi)
+- **LinkedIn**: [Yeong-gyu Choi](https://www.linkedin.com/in/yeong-gyu-choi-32355b174/)
+- **Email**: ktma82@gmail.com
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
