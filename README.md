@@ -46,45 +46,91 @@ gitops/
 
 시크릿은 공통 템플릿을 사용하여 환경별로 관리됩니다.
 
-### 1. 환경별 설정 및 시크릿 생성
+### 1. 시크릿 설정
 
-1) Local 환경 `.env` 파일 생성
+1) `.env` 파일 생성 
 ```bash
-# 공통 환경변수 설정
-echo "GIT_REPO_URL={git repository url}" > .env
-echo "GIT_USERNAME={github username}" >> .env
-echo "GIT_PASSWORD={github personal access token}" >> .env
-
-# Local 환경 설정
-echo "ENV=local" >> .local_env
+echo "GIT_REPO_URL={git repository address}" >> .env
+echo "GIT_USERNAME={username}" >> .env
+echo "GIT_PASSWORD={password or access token}" >> .env
 ```
 
-2) GitHub 환경 `.env` 파일 생성
+2) 환경변수 로드
 ```bash
-# 공통 환경변수 설정
-echo "GIT_REPO_URL={git repository url}" > .env
+export $(grep -v '^#' .env | xargs)
+```
+
+3) ArgoCD Repository Secret 생성
+```bash
+# Secret 템플릿 생성
+envsubst < ../secret/argocd-repository-template.yaml > ../secret/argocd-repository.yaml
+
+# Secret 적용
+kubectl apply -f ../secret/argocd-repository.yaml
+
+# Secret 확인
+kubectl get secrets -n argocd | grep argocd-repo-gitops-local
+```
+
+### 2. Docker 이미지 빌드
+```bash
+cd rag-fastapi-structured
+docker build -t rag-fastapi-structured .
+```
+
+### 3. ArgoCD 로그인
+```bash
+argocd login http://localhost:8070 --username {username} --password {password} --insecure
+```
+
+### 4. 애플리케이션 배포
+
+1) Application 등록
+```bash
+kubectl apply -f ./local/argocd/argocd-application.yaml
+```
+
+2) 배포 상태 확인
+```bash
+argocd app get rag-fastapi
+```
+
+3) 문제 해결
+
+배포 실패 시:
+```bash
+# 수동 동기화
+argocd app sync rag-fastapi
+
+# 필요시 애플리케이션 삭제
+argocd app delete rag-fastapi
+```
+
+## GitHub 환경 배포 가이드
+
+### 2. 시크릿 설정
+
+1) `.env` 파일 생성 
+```bash
+echo "GIT_REPO_URL={git repository url}" >> .env
 echo "GIT_USERNAME={github username}" >> .env
 echo "GIT_PASSWORD={github personal access token}" >> .env
 
-# GitHub 환경 설정
-echo "ENV=github" >> .env
-echo "GITHUB_USERNAME={github username}" >> .env
+```
+
+2) 환경변수 로드
+```bash
+export $(grep -v '^#' .env | xargs)
 
 # GitHub Container Registry 로그인
 docker login ghcr.io -u ${GIT_USERNAME} -p ${GIT_PASSWORD}
 
 # Docker config.json을 base64로 인코딩
 echo "DOCKER_CONFIG_JSON=$(cat ~/.docker/config.json | base64)" >> .env
+
 ```
 
-3) 환경변수 로드
-```bash
-export $(grep -v '^#' .env | xargs)
-```
-
-4) 시크릿 생성
-
-4.1) ArgoCD Repository Secret 생성
+3) ArgoCD Repository Secret 생성
 ```bash
 # Secret 템플릿 생성
 envsubst < ./secret/argocd-repository-template.yaml > ./secret/argocd-repository.yaml
@@ -93,179 +139,13 @@ envsubst < ./secret/argocd-repository-template.yaml > ./secret/argocd-repository
 kubectl apply -f ./secret/argocd-repository.yaml
 
 # Secret 확인
-kubectl get secrets -n argocd | grep 'argocd-repo-gitops'
-```
-
-4.2) GitHub Container Registry Secret 생성 (GitHub 환경)
-```bash
-# GitHub Container Registry 로그인
-docker login ghcr.io -u ${GIT_USERNAME} -p ${GIT_PASSWORD}
-
-# 시크릿 생성
-kubectl create namespace fastapi
-kubectl create secret docker-registry ghcr-secret \
-  --docker-server=ghcr.io \
-  --docker-username=${GIT_USERNAME} \
-  --docker-password=${GIT_PASSWORD} \
-  -n fastapi
-
-# 서비스 계정에 시크릿 연결
-kubectl patch serviceaccount default -n fastapi \
-  -p '{"imagePullSecrets": [{"name": "ghcr-secret"}]}'
-
-# Secret 확인
-kubectl get secrets -n fastapi | grep 'ghcr-secret'
-```
-
-### 2. 애플리케이션 배포
-
-#### Local 환경 배포
-
-1) Docker 이미지 빌드
-```bash
-# rag-fastapi-structured 디렉토리로 이동
-cd rag-fastapi-structured
-
-# 이미지 빌드
-docker build -t rag-fastapi-structured:latest .
-```
-
-2) ArgoCD 로그인
-```bash
-argocd login http://localhost:8070 --username {username} --password {password} --insecure
-```
-
-3) Application 등록
-```bash
-# Application 생성
-kubectl apply -f ./local/argocd/application.yaml
-
-# 배포 상태 확인
-argocd app get rag-fastapi-local
-
-# 리소스 확인
-kubectl get all,ingress -n fastapi -l app=rag-fastapi-local
-```
-
-4) 서비스 접근
-```bash
-# API 테스트
-curl localhost:8000
-
-# Swagger UI 접근
-open http://localhost:8000/docs
-```
-
-#### GitHub 환경 배포
-
-1) GitHub Container Registry 이미지 준비
-```bash
-# 이미지 빌드
-docker build -t ghcr.io/ch0992/rag-fastapi-structured:latest ./rag-fastapi-structured
-
-# GitHub Container Registry 로그인
-docker login ghcr.io -u ${GIT_USERNAME} -p ${GIT_PASSWORD}
-
-# 이미지 푸시
-docker push ghcr.io/ch0992/rag-fastapi-structured:latest
+kubectl get secrets -n argocd | grep 'argocd-repo-gitops-github\|ghcr-secret'
 ```
 
 2) Application 등록
 ```bash
-# Application 생성
-kubectl apply -f ./github/argocd/application.yaml
-
-# 배포 상태 확인
-argocd app get rag-fastapi-github
-
-# 리소스 확인
-kubectl get all,ingress -n fastapi -l app=rag-fastapi-github
-```
-
-3) 서비스 접근
-```bash
-# API 테스트
-curl localhost:8001
-
-# Swagger UI 접근
-open http://localhost:8001/docs
-```
-
-### 3. 트러블슈팅 가이드
-
-#### 1. ArgoCD Repository Secret 문제
-
-증상:
-- ArgoCD에서 Git 저장소에 접근하지 못하는 경우
-- `ComparisonError: failed to generate manifest` 에러 발생
-
-해결방법:
-```bash
-# 1. Secret 존재 여부 확인
-kubectl get secrets -n argocd | grep 'argocd-repo-gitops'
-
-# 2. Secret 재생성
-envsubst < ./secret/argocd-repository-template.yaml > ./secret/argocd-repository.yaml
-kubectl apply -f ./secret/argocd-repository.yaml
-
-# 3. Application 재동기화
-argocd app sync rag-fastapi-local
-```
-
-#### 2. GitHub Container Registry 인증 문제
-
-증상:
-- `ImagePullBackOff` 또는 `ErrImagePull` 에러
-- `unauthorized: authentication required` 메시지
-
-해결방법:
-```bash
-# 1. GitHub Container Registry Secret 생성
-kubectl create secret docker-registry ghcr-secret \
-  --docker-server=ghcr.io \
-  --docker-username=${GIT_USERNAME} \
-  --docker-password=${GIT_PASSWORD} \
-  -n fastapi
-
-# 2. 서비스 계정에 Secret 연결
-kubectl patch serviceaccount default -n fastapi \
-  -p '{"imagePullSecrets": [{"name": "ghcr-secret"}]}'
-
-# 3. Pod 재시작
-kubectl delete pod -n fastapi -l app=rag-fastapi-github
-```
-
-#### 3. 서비스 포트 충돌
-
-증상:
-- Local과 GitHub 환경의 서비스가 같은 포트(8000)를 사용하려고 할 때
-
-해결방법:
-```bash
-# 1. GitHub 환경의 서비스 포트를 8001로 변경
-# github/argocd/application.yaml 파일의 values 섹션에 추가:
-service:
-  port: 8001
-
-# 2. 변경사항 적용
-kubectl apply -f ./github/argocd/application.yaml
-
-# 3. 서비스 포트 확인
-kubectl get svc -n fastapi
-```
-
-#### 4. 애플리케이션 재배포
-
-문제가 지속되는 경우 전체 재배포:
-```bash
-# 1. 애플리케이션 삭제
-argocd app delete rag-fastapi-local  # 또는 rag-fastapi-github
-
-# 2. 리소스 정리 확인
-kubectl get all,ingress -n fastapi
-
-# 3. 애플리케이션 재생성
-kubectl apply -f ./local/argocd/application.yaml  # 또는 ./github/argocd/application.yaml
+# Application 템플릿에 환경변수 적용
+envsubst < ./github/argocd/application.yaml | kubectl apply -f -
 ```
 
 ### 3. 배포 확인
@@ -303,13 +183,3 @@ argocd app get rag-fastapi-github
 1. Git 인증 정보는 반드시 안전하게 관리해야 합니다.
 2. ArgoCD Application을 삭제하기 전에 관련 리소스가 정리되었는지 확인하세요.
 3. 프로덕션 환경에서는 적절한 리소스 설정과 보안 정책을 적용해야 합니다.
-
-## Author
-
-- **Author**: 최영규 (Yeong-gyu Choi)
-- **LinkedIn**: [Yeong-gyu Choi](https://www.linkedin.com/in/yeong-gyu-choi-32355b174/)
-- **Email**: ktma82@gmail.com
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.

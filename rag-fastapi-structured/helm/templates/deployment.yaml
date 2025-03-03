@@ -17,6 +17,10 @@ spec:
         app: {{ .Release.Name }}-{{ .Values.environment.name }}
         environment: {{ .Values.environment.name }}
     spec:
+      {{- if eq .Values.environment.name "github" }}
+      imagePullSecrets:
+        - name: ghcr-secret
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
