@@ -15,7 +15,7 @@ image:
 
 service:
   type: LoadBalancer
-  port: ""
+  port: 8060
 
 resources:
   limits:
