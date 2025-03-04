@@ -10,15 +10,12 @@ replicaCount: 1
 
 image:
   repository: ""
-  tag: latest
+  tag: ""
   pullPolicy: IfNotPresent
 
 service:
   type: LoadBalancer
-  # 기본 port는 8060으로 설정하고, 환경별로 덮어쓰기
-  # local: 8060
-  # github: 8061
-  port: 8060
+  port: ""
 
 resources:
   limits:

@@ -5,7 +5,7 @@ replicaCount: 1
 
 image:
   repository: rag-fastapi-structured
-  tag: 3
+  tag: 2
   pullPolicy: IfNotPresent
 
 service:
