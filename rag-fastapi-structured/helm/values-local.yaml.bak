@@ -4,8 +4,8 @@ environment:
 replicaCount: 1
 
 image:
-  repository: rag-fastapi-structured
-  tag: latest
+  repository: localhost:5000/rag-fastapi-structured
+  tag: 3
   pullPolicy: IfNotPresent
 
 service:
