@@ -17,7 +17,7 @@ spec:
           name: local
         image:
           repository: localhost:5000/rag-fastapi-structured
-          tag: "{{ .Values.image.tag }}"  # 자동 태그 반영
+          tag: latest
           pullPolicy: IfNotPresent
   destination:
     server: https://kubernetes.default.svc
@@ -30,4 +30,4 @@ spec:
     - CreateNamespace=true # 네임스페이스가 없으면 자동 생성
     - PrunePropagationPolicy=foreground # 리소스 삭제 시 종속된 리소스도 함께 삭제
     - PruneLast=true # 마지막 동기화 후 리소스 삭제 수행
-    - ApplyOutOfSyncOnly=true # 변경된 항목만 업데이트
+    # - ApplyOutOfSyncOnly=true # 변경된 항목만 업데이트
