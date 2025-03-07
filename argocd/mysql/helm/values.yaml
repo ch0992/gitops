@@ -1,0 +1,12 @@
+auth:
+  rootPassword: airflow # root 비밀번호
+  username: airflow # 사용자 계정
+  password: airflow # 사용자 비밀번호
+  database: airflow # 기본 데이터베이스
+
+primary:
+  persistence:
+    enabled: true # 영구 저장소 활성화
+    size: 8Gi # 스토리지 크기
+  service:
+    type: ClusterIP # 서비스 타입 설정
