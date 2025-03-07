@@ -15,20 +15,20 @@ primary:
       -- postgres 계정의 비밀번호 설정
       ALTER USER postgres WITH PASSWORD 'postgresql';
 
-      -- airflow 계정이 없으면 생성 후 권한 부여
+      -- adminuser 계정이 없으면 생성 후 권한 부여
       DO $$ 
       BEGIN
-        IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'airflow') THEN
-          CREATE ROLE airflow WITH LOGIN PASSWORD 'airflow';
-          ALTER ROLE airflow CREATEDB;
-          CREATE DATABASE airflow OWNER airflow;
-          GRANT ALL PRIVILEGES ON DATABASE airflow TO airflow;
+        IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'adminuser') THEN
+          CREATE ROLE adminuser WITH LOGIN PASSWORD 'admin1234';
+          ALTER ROLE adminuser CREATEDB;
+          CREATE DATABASE ragdb OWNER adminuser;
+          GRANT ALL PRIVILEGES ON DATABASE ragdb TO adminuser;
         END IF;
       END $$;
 
-      -- postgres 계정이 airflow 데이터베이스를 관리할 수 있도록 권한 부여
-      GRANT ALL PRIVILEGES ON DATABASE airflow TO postgres;
-      ALTER ROLE airflow WITH SUPERUSER;
+      -- postgres 계정이 ragdb 데이터베이스를 관리할 수 있도록 권한 부여
+      GRANT ALL PRIVILEGES ON DATABASE ragdb TO postgres;
+      ALTER ROLE adminuser WITH SUPERUSER INHERIT;
       GRANT pg_read_all_settings TO postgres;
 
   postgresqlConfiguration:
@@ -48,6 +48,6 @@ primary:
 
 auth:
   postgresPassword: "postgresql"
-  username: "airflow"
-  password: "airflow"
-  database: "airflow"
+  username: "adminuser"
+  password: "admin1234"
+  database: "ragdb"
