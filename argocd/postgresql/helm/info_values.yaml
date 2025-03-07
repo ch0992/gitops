@@ -1,9 +1,40 @@
 primary:
   persistence:
+    enabled: true
     size: 10Gi # 기존 8Gi에서 10Gi로 변경
+
   service:
-    type: LoadBalancer # 기존 ClusterIP에서 LoadBalancer로 변경
+    type: LoadBalancer # DBeaver 등에서 직접 접근할 수 있도록 변경
+
+  initdbScripts:
+    init_pgvector.sql: |
+      CREATE EXTENSION IF NOT EXISTS vector;
+    init_users.sql: |
+      ALTER USER postgres WITH PASSWORD 'newpassword';  -- postgres 계정 비밀번호 설정
+      CREATE ROLE airflow WITH LOGIN PASSWORD 'airflow';  -- airflow 계정 생성
+      ALTER ROLE airflow CREATEDB;  -- airflow 계정에 DB 생성 권한 부여
+      CREATE DATABASE airflow OWNER airflow;  -- airflow 전용 데이터베이스 생성
+      GRANT pg_read_all_settings TO airflow;  -- airflow 계정에 설정 읽기 권한 부여
+
+  postgresqlConfiguration:
+    max_connections: "200"
+    shared_buffers: "256MB"
+
+  extendedConfiguration: |
+    # Allow remote connections from any IP (Modify with caution)
+    listen_addresses = '*'
+    password_encryption = 'scram-sha-256'
+
+  pgHbaConfiguration: |
+    # TYPE  DATABASE        USER            ADDRESS                 METHOD
+    local   all             postgres                                trust
+    local   all             all                                     md5
+    host    all             all             127.0.0.1/32            md5
+    host    all             all             0.0.0.0/0               md5
+    host    all             all             ::1/128                 md5
+
 auth:
-  username: airflow # 기본 유저를 airflow에서 myuser로 변경
-  password: airflow # 보안 강화를 위해 변경
-  database: airflow # 기본 DB 이름 변경
+  postgresPassword: "newpassword"
+  username: "airflow"
+  password: "airflow"
+  database: "airflow"
