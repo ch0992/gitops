@@ -7,21 +7,6 @@ primary:
     type: LoadBalancer # DBeaver 등에서 직접 접근할 수 있도록 변경
 
   initdbScriptsCM:
-    init-users.sql: |
-      DO $$ 
-      BEGIN
-        -- postgres 계정 비밀번호 변경
-        ALTER USER postgres WITH PASSWORD 'postgresql';
-
-        -- airflow 계정이 없으면 생성
-        IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'airflow') THEN
-          CREATE ROLE airflow WITH LOGIN PASSWORD 'airflow';
-          ALTER ROLE airflow CREATEDB;
-          CREATE DATABASE airflow OWNER airflow;
-          GRANT ALL PRIVILEGES ON DATABASE airflow TO airflow;
-        END IF;
-      END $$;
-
     init-config.sql: |
       -- 비밀번호 암호화 방식을 md5로 설정
       ALTER SYSTEM SET password_encryption = 'md5';
@@ -30,8 +15,18 @@ primary:
       -- postgres 계정의 비밀번호를 다시 md5 방식으로 설정
       ALTER USER postgres WITH PASSWORD 'postgresql';
 
-      -- airflow 계정의 비밀번호를 다시 md5 방식으로 설정
-      ALTER USER airflow WITH PASSWORD 'airflow';
+      -- airflow 계정이 없으면 생성 후 md5 방식으로 설정
+      DO $$ 
+      BEGIN
+        IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'airflow') THEN
+          CREATE ROLE airflow WITH LOGIN PASSWORD 'airflow';
+          ALTER ROLE airflow CREATEDB;
+          CREATE DATABASE airflow OWNER airflow;
+          GRANT ALL PRIVILEGES ON DATABASE airflow TO airflow;
+        ELSE
+          ALTER USER airflow WITH PASSWORD 'airflow';
+        END IF;
+      END $$;
 
   postgresqlConfiguration:
     max_connections: "200"
