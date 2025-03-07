@@ -10,6 +10,9 @@ primary:
     init-users.sql: |
       DO $$ 
       BEGIN
+        -- postgres 계정 비밀번호 변경
+        ALTER USER postgres WITH PASSWORD 'postgresql';
+
         -- airflow 계정이 없으면 생성
         IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'airflow') THEN
           CREATE ROLE airflow WITH LOGIN PASSWORD 'airflow';
@@ -24,7 +27,10 @@ primary:
       ALTER SYSTEM SET password_encryption = 'md5';
       SELECT pg_reload_conf();  -- 설정 적용
 
-      -- airflow 계정의 비밀번호를 md5 방식으로 다시 설정
+      -- postgres 계정의 비밀번호를 다시 md5 방식으로 설정
+      ALTER USER postgres WITH PASSWORD 'postgresql';
+
+      -- airflow 계정의 비밀번호를 다시 md5 방식으로 설정
       ALTER USER airflow WITH PASSWORD 'airflow';
 
   postgresqlConfiguration:
@@ -43,7 +49,7 @@ primary:
     host    all             all             ::1/128                 md5
 
 auth:
-  postgresPassword: "newpassword"
+  postgresPassword: "postgresql"
   username: "airflow"
   password: "airflow"
   database: "airflow"
