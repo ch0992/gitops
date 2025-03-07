@@ -6,27 +6,36 @@ primary:
   service:
     type: LoadBalancer # DBeaver 등에서 직접 접근할 수 있도록 변경
 
-  initdbScripts:
-    init_pgvector.sql: |
-      CREATE EXTENSION IF NOT EXISTS vector;
-    init_users.sql: |
-      ALTER USER postgres WITH PASSWORD 'newpassword';  -- postgres 계정 비밀번호 설정
-      CREATE ROLE airflow WITH LOGIN PASSWORD 'airflow';  -- airflow 계정 생성
-      ALTER ROLE airflow CREATEDB;  -- airflow 계정에 DB 생성 권한 부여
-      CREATE DATABASE airflow OWNER airflow;  -- airflow 전용 데이터베이스 생성
-      GRANT pg_read_all_settings TO airflow;  -- airflow 계정에 설정 읽기 권한 부여
+  initdbScriptsCM:
+    init-users.sql: |
+      DO $$ 
+      BEGIN
+        -- airflow 계정이 없으면 생성
+        IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'airflow') THEN
+          CREATE ROLE airflow WITH LOGIN PASSWORD 'airflow';
+          ALTER ROLE airflow CREATEDB;
+          CREATE DATABASE airflow OWNER airflow;
+          GRANT ALL PRIVILEGES ON DATABASE airflow TO airflow;
+        END IF;
+      END $$;
+
+    init-config.sql: |
+      -- 비밀번호 암호화 방식을 md5로 설정
+      ALTER SYSTEM SET password_encryption = 'md5';
+      SELECT pg_reload_conf();  -- 설정 적용
+
+      -- airflow 계정의 비밀번호를 md5 방식으로 다시 설정
+      ALTER USER airflow WITH PASSWORD 'airflow';
 
   postgresqlConfiguration:
     max_connections: "200"
     shared_buffers: "256MB"
 
   extendedConfiguration: |
-    # Allow remote connections from any IP (Modify with caution)
     listen_addresses = '*'
-    password_encryption = 'scram-sha-256'
+    password_encryption = 'md5'
 
   pgHbaConfiguration: |
-    # TYPE  DATABASE        USER            ADDRESS                 METHOD
     local   all             postgres                                trust
     local   all             all                                     md5
     host    all             all             127.0.0.1/32            md5
