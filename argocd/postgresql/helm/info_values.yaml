@@ -12,10 +12,10 @@ primary:
       ALTER SYSTEM SET password_encryption = 'md5';
       SELECT pg_reload_conf();  -- 설정 적용
 
-      -- postgres 계정의 비밀번호를 다시 md5 방식으로 설정
+      -- postgres 계정의 비밀번호 설정
       ALTER USER postgres WITH PASSWORD 'postgresql';
 
-      -- airflow 계정이 없으면 생성 후 md5 방식으로 설정
+      -- airflow 계정이 없으면 생성 후 권한 부여
       DO $$ 
       BEGIN
         IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'airflow') THEN
@@ -23,10 +23,13 @@ primary:
           ALTER ROLE airflow CREATEDB;
           CREATE DATABASE airflow OWNER airflow;
           GRANT ALL PRIVILEGES ON DATABASE airflow TO airflow;
-        ELSE
-          ALTER USER airflow WITH PASSWORD 'airflow';
         END IF;
       END $$;
+
+      -- postgres 계정이 airflow 데이터베이스를 관리할 수 있도록 권한 부여
+      GRANT ALL PRIVILEGES ON DATABASE airflow TO postgres;
+      ALTER ROLE airflow WITH SUPERUSER;
+      GRANT pg_read_all_settings TO postgres;
 
   postgresqlConfiguration:
     max_connections: "200"
