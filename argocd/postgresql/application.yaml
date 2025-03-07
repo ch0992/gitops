@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: postgresql
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/ch0992/gitops.git # Git 저장소 URL
+    targetRevision: HEAD # 최신 브랜치 사용
+    path: argocd/postgresql/helm # PostgreSQL Helm Chart 경로
+    helm:
+      valueFiles:
+      - values.yaml # 기본 values.yaml
+      - info_values.yaml # 추가로 오버라이딩할 values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: database # PostgreSQL이 배포될 네임스페이스
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+    - PrunePropagationPolicy=foreground
+    - PruneLast=true
