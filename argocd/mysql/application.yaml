@@ -2,26 +2,25 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: mysql
-  namespace: database
+  namespace: argocd
 spec:
   project: default
   source:
     repoURL: https://github.com/ch0992/gitops.git # Git 저장소 URL
     targetRevision: HEAD # 최신 브랜치 사용
-    path: argocd/mysql/helm # MySQL Helm values.yaml 경로
+    path: argocd/mysql/helm # Helm Chart가 위치한 경로
     helm:
-      chart: mysql # Bitnami MySQL Chart 사용
-      repo: https://charts.bitnami.com/bitnami # Helm Repository URL
       valueFiles:
-      - values.yaml
+      - values.yaml # 기본 values.yaml
+      - info_values.yaml # 추가로 오버라이딩할 values.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: database # MySQL이 설치될 네임스페이스
+    namespace: database # MySQL을 배포할 네임스페이스
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
-    - CreateNamespace=true # 네임스페이스가 없으면 자동 생성
+    - CreateNamespace=true
     - PrunePropagationPolicy=foreground
     - PruneLast=true
