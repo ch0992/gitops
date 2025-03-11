@@ -1,0 +1,36 @@
+# Default values for Qdrant Helm chart
+
+replicaCount: 1
+
+image:
+  repository: qdrant/qdrant
+  tag: "v1.7.3"
+  pullPolicy: IfNotPresent
+
+service:
+  type: LoadBalancer
+  port: 8050
+  targetPort: 6333
+  grpcPort: 6334
+
+env:
+  QDRANT__SERVICE__HTTP_PORT: "6333"
+  QDRANT__SERVICE__GRPC_PORT: "6334"
+  QDRANT__STORAGE__STORAGE_PATH: "/qdrant/storage"
+
+persistence:
+  enabled: true
+  storageClassName: ""
+  accessMode: ReadWriteOnce
+  size: 1Gi
+  hostPath:
+    enabled: true
+    path: /tmp/qdrant-data
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+  requests:
+    cpu: 500m
+    memory: 512Mi
