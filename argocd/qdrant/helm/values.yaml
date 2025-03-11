@@ -61,3 +61,6 @@ config:
     enabled: true
     p2p:
       port: 6335
+
+snapshotRestoration:
+  enabled: false
