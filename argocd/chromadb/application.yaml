@@ -4,7 +4,7 @@ metadata:
   name: chromadb
   namespace: argocd
 spec:
-  project: database
+  project: default
   source:
     repoURL: https://github.com/ch0992/gitops.git
     targetRevision: HEAD

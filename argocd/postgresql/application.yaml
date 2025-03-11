@@ -4,7 +4,7 @@ metadata:
   name: postgresql
   namespace: argocd
 spec:
-  project: database
+  project: default
   source:
     repoURL: https://github.com/ch0992/gitops.git # Git 저장소 URL
     targetRevision: HEAD # 최신 브랜치 사용

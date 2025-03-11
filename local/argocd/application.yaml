@@ -4,7 +4,7 @@ metadata:
   name: rag-fastapi-local
   namespace: argocd
 spec:
-  project: application
+  project: default
   source:
     repoURL: https://github.com/ch0992/gitops.git
     targetRevision: HEAD
