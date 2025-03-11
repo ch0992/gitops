@@ -5,8 +5,8 @@ replicaCount: 1
 image:
   repository: docker.io/qdrant/qdrant
   pullPolicy: IfNotPresent
-  # Using latest tag which includes ARM64 support
-  tag: latest
+  # Specify a proper semantic version
+  tag: "1.7.4"
   useUnprivilegedImage: true
 
 service:
