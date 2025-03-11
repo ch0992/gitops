@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chromadb
+  namespace: rag
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: chromadb
+  template:
+    metadata:
+      labels:
+        app: chromadb
+    spec:
+      containers:
+      - name: chromadb
+        image: chromadb/chroma:0.6.2 # ✅ 최신 버전 사용
+        ports:
+        - containerPort: 8000 # 내부 포트 (FastAPI 기본값)
+        env:
+        - name: ALLOW_RESET
+          value: "true" # ✅ 인덱스 초기화 허용
+        - name: CHROMA_SERVER_HOST
+          value: "0.0.0.0" # ✅ 외부 접근 가능하도록 설정
+        - name: CHROMA_SERVER_HTTP_PORT
+          value: "8000" # ✅ 내부 서버 포트 설정
+        - name: IS_PERSISTENT
+          value: "true" # ✅ 데이터 영구 저장 활성화
+        - name: PERSIST_DIRECTORY
+          value: "/data" # ✅ 영구 데이터 저장 경로 설정
+        - name: ANONYMIZED_TELEMETRY
+          value: "false" # ✅ 익명 통계 전송 비활성화
+        volumeMounts:
+        - name: chromadb-data # 볼륨 마운트 이름
+          mountPath: /data # 컨테이너 내부 데이터 경로와 매칭
+      volumes:
+      - name: chromadb-data # 볼륨 이름과 일치시킴
+        hostPath:
+          path: /tmp/chromadb-data # 로컬 호스트 경로 (Docker Desktop에서 사용)
+          type: DirectoryOrCreate # 디렉토리가 없으면 자동 생성
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: chromadb
+  namespace: rag
+spec:
+  type: LoadBalancer # ✅ LoadBalancer 타입으로 변경
+  selector:
+    app: chromadb
+  ports:
+  - protocol: TCP
+    port: 8090 # 외부에서 접근할 포트 (서비스 포트)
+    targetPort: 8000 # 컨테이너 내부 포트와 매칭 (FastAPI 기본값)
