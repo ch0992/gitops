@@ -5,7 +5,7 @@ metadata:
   labels:
     app: {{ .Release.Name }}-qdrant
 spec:
-  type: LoadBalancer
+  type: {{ .Values.service.type }}
   ports:
     - port: {{ .Values.service.port }}
       targetPort: {{ .Values.service.targetPort }}
