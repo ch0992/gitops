@@ -6,7 +6,7 @@ image:
   repository: docker.io/qdrant/qdrant
   pullPolicy: IfNotPresent
   # Specify a proper semantic version
-  tag: "1.7.4"
+  tag: "1.13.4"
   useUnprivilegedImage: true
 
 service:
