@@ -42,6 +42,9 @@ persistence:
   accessMode: ReadWriteOnce
   size: 10Gi
   mountPath: /data
+  hostPath:
+    enabled: true
+    path: /tmp/lmstudio-data
 
 nodeSelector: {}
 
