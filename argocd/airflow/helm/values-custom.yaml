@@ -20,7 +20,7 @@ webserver:
   extraVolumes:
   - name: dags
     hostPath:
-      path: /Users/ygtoken/workspace/airflow/dags
+      path: /Users/ygtoken/workspace/gitops/argocd/airflow/dags
 
 auth:
   defaultUser:
@@ -63,7 +63,7 @@ workers:
   extraVolumes:
   - name: dags
     hostPath:
-      path: /Users/ygtoken/workspace/airflow/dags
+      path: /Users/ygtoken/workspace/gitops/argocd/airflow/dags
 
 scheduler:
   securityContext:
@@ -92,7 +92,7 @@ scheduler:
   extraVolumes:
   - name: dags
     hostPath:
-      path: /Users/ygtoken/workspace/airflow/dags
+      path: /Users/ygtoken/workspace/gitops/argocd/airflow/dags
 
 airflow:
   extraPipPackages: "apache-airflow-providers-mysql"
