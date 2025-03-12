@@ -1,0 +1,8 @@
+service:
+  type: LoadBalancer
+  ports:
+  - name: http
+    port: 8050
+    targetPort: 6333
+    protocol: TCP
+    checksEnabled: true
