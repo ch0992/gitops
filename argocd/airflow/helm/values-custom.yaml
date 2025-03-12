@@ -1,0 +1,98 @@
+webserver:
+  service:
+    type: LoadBalancer
+  resources:
+    requests:
+      memory: 1024Mi
+      cpu: 500m
+    limits:
+      memory: 2048Mi
+      cpu: 1000m
+  livenessProbe:
+    initialDelaySeconds: 60
+    periodSeconds: 20
+  readinessProbe:
+    initialDelaySeconds: 60
+    periodSeconds: 20
+  extraVolumeMounts:
+  - name: dags
+    mountPath: /opt/airflow/dags
+  extraVolumes:
+  - name: dags
+    hostPath:
+      path: /Users/ygtoken/workspace/airflow/dags
+
+auth:
+  defaultUser:
+    enabled: true
+    username: admin
+    password: admin
+
+postgresql:
+  primary:
+    securityContext:
+      runAsUser: 0
+      fsGroup: 0
+  volumePermissions:
+    enabled: true
+
+workers:
+  securityContext:
+    runAsUser: 0
+    fsGroup: 0
+  resources:
+    requests:
+      memory: 4096Mi
+      cpu: 1000m
+    limits:
+      memory: 6144Mi
+      cpu: 2000m
+  extraInitContainers:
+  - name: fix-worker-logs-permissions
+    image: busybox:latest
+    command:
+    - sh
+    - -c
+    - "mkdir -p /opt/airflow/logs/worker && chmod -R 755 /opt/airflow/logs/worker"
+    volumeMounts:
+    - name: logs
+      mountPath: /opt/airflow/logs
+  extraVolumeMounts:
+  - name: dags
+    mountPath: /opt/airflow/dags
+  extraVolumes:
+  - name: dags
+    hostPath:
+      path: /Users/ygtoken/workspace/airflow/dags
+
+scheduler:
+  securityContext:
+    runAsUser: 0
+    fsGroup: 0
+  resources:
+    requests:
+      memory: 1024Mi
+      cpu: 500m
+    limits:
+      memory: 2048Mi
+      cpu: 1000m
+  extraInitContainers:
+  - name: fix-logs-permissions
+    image: busybox:latest
+    command:
+    - sh
+    - -c
+    - "mkdir -p /opt/airflow/logs/scheduler && chmod -R 755 /opt/airflow/logs/scheduler"
+    volumeMounts:
+    - name: logs
+      mountPath: /opt/airflow/logs
+  extraVolumeMounts:
+  - name: dags
+    mountPath: /opt/airflow/dags
+  extraVolumes:
+  - name: dags
+    hostPath:
+      path: /Users/ygtoken/workspace/airflow/dags
+
+airflow:
+  extraPipPackages: "apache-airflow-providers-mysql"
