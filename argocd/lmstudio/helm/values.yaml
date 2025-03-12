@@ -1,9 +1,9 @@
 replicaCount: 1
 
 image:
-  repository: lmstudio/lmstudio
+  repository: ghcr.io/lmstudio/lmstudio
   pullPolicy: IfNotPresent
-  tag: "latest"
+  tag: "v0.2.5"
 
 imagePullSecrets: []
 
