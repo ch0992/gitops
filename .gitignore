@@ -5,6 +5,7 @@
 # Generated secrets
 secret/argocd-repository.yaml
 secret/ghcr-secret.yaml
+secret/ghcr-secret-lmstudio.yaml
 
 # Backup files
 backup/
