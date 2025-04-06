@@ -2,8 +2,8 @@
 global:
   elasticsearch:
     auth:
-      username: elastic
-      password: elastic123
+      username: admin
+      password: admin
 
 ## Elasticsearch parameters
 elasticsearch:
