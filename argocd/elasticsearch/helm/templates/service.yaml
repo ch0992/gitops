@@ -1,9 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "elasticsearch.fullname" . }}
+  name: {{ include "elasticsearch.fullname" . }}-http
   labels:
     {{- include "elasticsearch.labels" . | nindent 4 }}
+    service: http
     {{- with .Values.commonLabels }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
@@ -12,15 +13,11 @@ metadata:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  type: {{ .Values.service.type }}
+  type: {{ .Values.service.http.type }}
   ports:
     - name: http
-      port: {{ .Values.service.ports.http }}
+      port: {{ .Values.service.http.port }}
       targetPort: http
-      protocol: TCP
-    - name: transport
-      port: {{ .Values.service.ports.transport }}
-      targetPort: transport
       protocol: TCP
   selector:
     {{- include "elasticsearch.selectorLabels" . | nindent 4 }}

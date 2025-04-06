@@ -28,7 +28,9 @@ elasticsearch:
     xpack.security.enrollment.enabled: true
 
 service:
-  type: ClusterIP
-  ports:
-    http: 9200
-    transport: 9300
+  http:
+    type: LoadBalancer
+    port: 9200
+  transport:
+    type: ClusterIP
+    port: 9300
