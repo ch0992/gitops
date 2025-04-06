@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/yourusername/rag-lab.git  # 실제 GitHub 저장소 URL로 변경 필요
+    repoURL: https://github.com/ch0992/rag-lab.git # 실제 GitHub 저장소 URL로 변경 필요
     targetRevision: HEAD
     path: argocd/elasticsearch
   destination:
@@ -17,4 +17,4 @@ spec:
       prune: true
       selfHeal: true
     syncOptions:
-      - CreateNamespace=true
+    - CreateNamespace=true
