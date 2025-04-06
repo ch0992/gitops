@@ -1,0 +1,62 @@
+elasticsearch:
+  # Elasticsearch 클러스터 설정
+  clusterName: "elasticsearch"
+  nodeGroup: "master"
+
+  # 노드 설정
+  roles:
+    - master
+    - data
+    - ingest
+
+  # 레플리카 수
+  replicas: 3
+
+  # 리소스 설정
+  resources:
+    requests:
+      cpu: "1000m"
+      memory: "2Gi"
+    limits:
+      cpu: "2000m"
+      memory: "4Gi"
+
+  # 스토리지 설정
+  volumeClaimTemplate:
+    accessModes: ["ReadWriteOnce"]
+    storageClassName: "standard"
+    resources:
+      requests:
+        storage: 100Gi
+
+  # JVM 힙 크기 설정
+  esJavaOpts: "-Xmx2g -Xms2g"
+
+  # 보안 설정
+  security:
+    enabled: true
+    elasticPassword: "changeme"  # 실제 운영에서는 변경 필요
+
+  # 네트워크 설정
+  service:
+    type: ClusterIP
+    ports:
+      restAPI: 9200
+      transport: 9300
+
+  # 인증서 설정
+  createCert: true
+  secret:
+    enabled: true
+
+  # 시스템 설정
+  sysctlInitContainer:
+    enabled: true
+
+  # Anti-affinity 설정
+  antiAffinity: "soft"
+
+  # 상태 체크 설정
+  healthcheck:
+    enabled: true
+    timeout: 20

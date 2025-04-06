@@ -1,25 +1,20 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: chromadb
+  name: elasticsearch
   namespace: argocd
 spec:
   project: default
   source:
-    repoURL: https://github.com/ch0992/gitops.git
+    repoURL: https://github.com/yourusername/rag-lab.git  # 실제 GitHub 저장소 URL로 변경 필요
     targetRevision: HEAD
-    path: argocd/chromadb/helm
-    helm:
-      valueFiles:
-      - values.yaml
+    path: argocd/elasticsearch
   destination:
     server: https://kubernetes.default.svc
-    namespace: database
+    namespace: elasticsearch
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
-    - CreateNamespace=true
-    - PrunePropagationPolicy=foreground
-    - PruneLast=true
+      - CreateNamespace=true
