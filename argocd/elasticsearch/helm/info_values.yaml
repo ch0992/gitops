@@ -1,0 +1,34 @@
+## Global parameters
+global:
+  elasticsearch:
+    auth:
+      username: elastic
+      password: elastic123
+
+## Elasticsearch parameters
+elasticsearch:
+  image:
+    registry: docker.elastic.co
+    repository: elasticsearch/elasticsearch
+    tag: 8.10.4
+  persistence:
+    enabled: true
+    size: 10Gi
+  resources:
+    requests:
+      memory: "1Gi"
+      cpu: "500m"
+    limits:
+      memory: "2Gi"
+      cpu: "1000m"
+  config:
+    cluster.name: elasticsearch-cluster
+    discovery.type: single-node
+    xpack.security.enabled: true
+    xpack.security.enrollment.enabled: true
+
+service:
+  type: ClusterIP
+  ports:
+    http: 9200
+    transport: 9300

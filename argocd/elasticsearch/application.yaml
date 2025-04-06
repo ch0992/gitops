@@ -6,15 +6,21 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/ch0992/rag-lab.git # 실제 GitHub 저장소 URL로 변경 필요
+    repoURL: https://github.com/ch0992/gitops.git
     targetRevision: HEAD
-    path: argocd/elasticsearch
+    path: argocd/elasticsearch/helm
+    helm:
+      valueFiles:
+      - values.yaml
+      - info_values.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: elasticsearch
+    namespace: database
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
     - CreateNamespace=true
+    - PrunePropagationPolicy=foreground
+    - PruneLast=true

@@ -1,0 +1,46 @@
+## Common parameters
+nameOverride: ""
+fullnameOverride: ""
+
+## Labels to apply to all resources
+commonLabels: {}
+
+## Annotations to apply to all resources
+commonAnnotations: {}
+
+## Service account parameters
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}
+
+## Pod Security Context
+podSecurityContext:
+  fsGroup: 1000
+
+## Container Security Context
+containerSecurityContext:
+  runAsUser: 1000
+  runAsNonRoot: true
+
+## Elasticsearch configuration
+elasticsearch:
+  enabled: true
+  replicaCount: 1
+  updateStrategy:
+    type: RollingUpdate
+  podAnnotations: {}
+  podLabels: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+## Metrics configuration
+metrics:
+  enabled: false
+  serviceMonitor:
+    enabled: false
+    namespace: ""
+    interval: 30s
+    scrapeTimeout: 10s
+    selector: {}
