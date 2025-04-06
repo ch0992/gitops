@@ -48,10 +48,10 @@ spec:
             {{- end }}
           ports:
             - name: http
-              containerPort: {{ .Values.service.ports.http }}
+              containerPort: {{ .Values.service.http.port }}
               protocol: TCP
             - name: transport
-              containerPort: {{ .Values.service.ports.transport }}
+              containerPort: {{ .Values.service.transport.port }}
               protocol: TCP
           resources:
             {{- toYaml .Values.elasticsearch.resources | nindent 12 }}
